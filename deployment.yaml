@@ -1,36 +1,50 @@
-apiVersion: apps/v1
-kind: Deployment
+# --------------------------------------------
+# Deployment configuration for the application
+# --------------------------------------------
+apiVersion: apps/v1                # API version for Deployment
+kind: Deployment                   # Type of Kubernetes object (Deployment)
 metadata:
-  name: kubernetes-test-app
+  name: kubernetes-test-app        # Name of the Deployment
+
 spec:
-  replicas: 2  # Number of pods
-  selector:
+  replicas: 2                      # Number of Pod replicas (Kubernetes will run 2 Pods)
+  selector:                        # Defines how Deployment finds Pods to manage
     matchLabels:
-      app: kubernetes-test-app
-  template:
+      app: kubernetes-test-app     # Must match the labels of the Pod template below
+
+  template:                        # Pod template — defines what Pods will look like
     metadata:
       labels:
-        app: kubernetes-test-app
+        app: kubernetes-test-app   # Label attached to the Pods (used by Service selector)
     spec:
-      containers:
-      - name: kubernetes-test-app
-        image: kubernetes-test-app:latest
-        imagePullPolicy: Never  # Tell Kubernetes not to pull from a registry
-        # image: ank449/kubernetes-test-app:latest
-        resources:
+      containers:                  # List of containers that run inside the Pod
+      - name: kubernetes-test-app  # Name of the container
+        image: kubernetes-test-app:latest  # Docker image to use for the container
+        imagePullPolicy: Never     # Do not pull image from registry; use local image (useful in Minikube)
+        # image: ank449/kubernetes-test-app:latest  # Example if pulling from Docker Hub
+
+        resources:                 # Define resource limits for the container
           limits:
-            memory: "64Mi"
-            cpu: "200m"
+            memory: "64Mi"         # Maximum memory usage (64 MB)
+            cpu: "200m"            # Maximum CPU usage (200 millicores = 0.2 CPU cores)
+
         ports:
-        - containerPort: 5000
+        - containerPort: 5000      # Port on which the application inside the container runs
+
 ---
-apiVersion: v1
-kind: Service
+
+# --------------------------------------------
+# Service configuration to expose the app
+# --------------------------------------------
+apiVersion: v1                     # API version for Service
+kind: Service                      # Type of Kubernetes object (Service)
 metadata:
-  name: kubernetes-test-app
+  name: kubernetes-test-app        # Name of the Service
+
 spec:
   selector:
-    app: kubernetes-test-app
+    app: kubernetes-test-app       # Select Pods with this label (connects Service to Pods)
   ports:
-  - port: 8080
-    targetPort: 5000
+  - port: 8080                     # Port that the Service exposes
+    targetPort: 5000               # Port inside the container (Pod) that receives traffic
+    # So Service:8080 → Pod:5000
