@@ -431,7 +431,12 @@ kubectl delete deployment kubernetes-test-app
    minikube service kubernetes-test-app
    ```
 
-4. Open the Minikube dashboard:
+4. If you got the connection refused error:
+   ```bash
+   kubectl port-forward service/kubernetes-test-app 7080:8080
+   ```
+
+5. Open the Minikube dashboard:
    ```bash
    minikube dashboard
    ```
